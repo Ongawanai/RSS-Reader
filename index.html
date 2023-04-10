@@ -4,21 +4,26 @@
         <meta charset="utf-8" />
         <title>RSS Reader</title>
     </head>
-    <body>
-        <section>
-            <div class="row">
+    <body class="d-flex flex-column min-vh-100">
+        <section class="container-fluid bg-dark p-3">
+            <div class="row"></div>
+            <div class="text-white">
+                <h1>RSS агрегатор</h1>
+                <p>Начните читать RSS сегодня! Это легко, это красиво.</p>
                 <form action class="rss-form text-body">
-                    <div class="row">
-                        <div clas="rss-text">
-                            <input id="url-input" autofocus required name="url" aria-label="url" class="form-control w-100" placeholder="Ссылка RSS" autocomplete="off">
-                            <label for="url-input">Ссылка RSS</label>
+                        <div class="row">
+                            <div class="col">
+                                <div clas="rss-text">
+                                    <input id="url-input" autofocus required name="url" aria-label="url" class="form-control w-100" placeholder="Ссылка RSS" autocomplete="off">
+                                </div>
+                            </div>
+                            <div class="button">
+                                <button type="submit" class="h-100 btn btn-primary btn-lg px-sm-5" aria-label="add">Добавить</button>
+                            </div>
                         </div>
-                        <div class="button">
-                            <button type="submit" aria-label="add">Добавить</button>
-                        </div>
-                    </div>
                 </form>
             </div>
+        </div>
         </section>
     </body>
     <meta name="viewport" content="width=device-width, initial-scale=1">
