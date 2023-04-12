@@ -5,17 +5,33 @@ import * as yup from 'yup';
 import onChange from 'on-change';
 import renderSelector from './renders.js';
 
-export default (state) => {
-  const watchedState = onChange(state, (path, value) => renderSelector(path, value));
+const makeSchema = (language, target) => {
+  yup.setLocale({
+    string: {
+      default: `${language.t('string')}`,
+      url: `${language.t('url')}`,
+    },
+    mixed: {
+      notOneOf: `${language.t('notOneOf')}`,
+    },
+  });
+
+  const schema = yup.object({
+    rssInput: yup.string().url().nullable().notOneOf(target),
+  });
+
+  return schema;
+};
+
+export default (state, language) => {
+  const watchedState = onChange(state, (path, value) => renderSelector(path, value, language));
   const inputForm = document.querySelector('.rss-form');
   const input = document.querySelector('#url-input');
 
   inputForm.addEventListener('submit', (e) => {
     e.preventDefault();
     const currentRSS = state.formState.feedList;
-    const schema = yup.object({
-      rssInput: yup.string().url().nullable().notOneOf(currentRSS),
-    });
+    const schema = makeSchema(language, currentRSS);
     schema.isValid({ rssInput: input.value }).then((result) => {
       if (result === true) {
         watchedState.formState.feedList.push(input.value);

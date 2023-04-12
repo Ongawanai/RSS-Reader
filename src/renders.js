@@ -1,4 +1,4 @@
-const renderStatus = (status) => {
+const renderStatus = (status, language) => {
   const form = document.querySelector('#url-input');
   const errorText = document.querySelector('.errorText');
   switch (status) {
@@ -8,23 +8,23 @@ const renderStatus = (status) => {
       break;
     case false:
       form.classList.add('is-invalid');
-      errorText.textContent = 'Ссылка должна быть валидным URL';
+      errorText.textContent = language.t('url');
       break;
     case 'already exist':
       form.classList.add('is-invalid');
-      errorText.textContent = 'RSS уже существует';
+      errorText.textContent = language.t('notOneOf');
       break;
     default:
-      throw new Error(`invalid form status: ${status}`);
+      throw new Error(`${language.t('wrongStatus')}: ${status}`);
   }
 };
 
-const renderSelector = (path, value) => {
+const renderSelector = (path, value, language) => {
   switch (path) {
     case 'formState.feedList':
       break;
     case 'formState.isValid':
-      renderStatus(value);
+      renderStatus(value, language);
       break;
     default:
       throw new Error(`Unknown process State: ${path}`);
