@@ -3,6 +3,7 @@
   "version": "1.0.0",
   "description": "My webpack project",
   "main": "index.js",
+  "type": "module",
   "repository": {
     "type": "git",
     "url": "git+https://github.com/Ongawanai/frontend-project-11.git"
@@ -31,6 +32,7 @@
   },
   "dependencies": {
     "bootstrap": "^5.2.3",
+    "on-change": "^4.0.2",
     "yup": "^1.0.2"
   }
 }

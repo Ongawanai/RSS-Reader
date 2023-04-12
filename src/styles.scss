@@ -19,6 +19,16 @@
     min-height: 100vh !important;
 }
 
+.is-invalid {
+    border-color: red;
+}
+
+.errorText {
+    color: red;
+    position: absolute;
+    font-size: .875rem;
+}
+
 .p-3 {
     padding: 3rem !important;
 }
