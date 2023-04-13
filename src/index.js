@@ -27,19 +27,20 @@ export default (state, language) => {
   const watchedState = onChange(state, (path, value) => renderSelector(path, value, language));
   const inputForm = document.querySelector('.rss-form');
   const input = document.querySelector('#url-input');
+  const rssList = [];
 
   inputForm.addEventListener('submit', (e) => {
     e.preventDefault();
-    const currentRSS = state.formState.feedList;
-    const schema = makeSchema(language, currentRSS);
+    const schema = makeSchema(language, rssList);
     schema.isValid({ rssInput: input.value }).then((result) => {
       if (result === true) {
-        watchedState.formState.feedList.push(input.value);
+        rssList.push(input.value);
+        watchedState.formState.currentUrl = input.value;
         watchedState.formState.isValid = true;
         inputForm.reset();
         input.focus();
       } else {
-        const errorType = currentRSS.includes(input.value) ? 'already exist' : false;
+        const errorType = rssList.includes(input.value) ? 'already exist' : false;
         watchedState.formState.isValid = errorType;
       }
     });

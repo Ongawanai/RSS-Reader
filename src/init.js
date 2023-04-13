@@ -10,7 +10,7 @@ const init = () => {
       isValid: true,
       errors: [],
       inputText: '',
-      feedList: [],
+      currentUrl: '',
     },
   };
   const i18nextInstance = i18next.createInstance();
