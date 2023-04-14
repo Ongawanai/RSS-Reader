@@ -10,6 +10,8 @@ export default {
       posts: 'Посты',
       feeds: 'Фиды',
       view: 'Просмотр',
+      parsingError: 'Ресурс не содержит валидный RSS',
+      networkError: 'Ошибка при обращении к сети',
     },
   },
 };

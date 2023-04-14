@@ -35,8 +35,6 @@ const firstRenderFeed = (language) => {
 };
 
 const renderFeed = (feedData, language) => {
-  console.log(feedData);
-
   // Проверяем, добавлены ли уже какие-либо фиды
   const feedContainer = document.querySelector('.feeds');
   const postContrainer = document.querySelector('.posts');
@@ -70,18 +68,22 @@ const renderFeed = (feedData, language) => {
   feedList.append(feed);
 
   // Создаём посты
-  items.forEach((item, index) => {
+  items.forEach((item) => {
+    const post = document.createElement('li');
+    post.classList.add('list-group-item', 'd-flex', 'justify-content-between');
+    postList.append(post);
+    const id = document.querySelectorAll('[data-id]').length / 2;
     const a = document.createElement('a');
-    postList.append(a);
+    post.append(a);
     const link = item.querySelector('link').textContent;
     const description = item.querySelector('title').textContent;
-    a.outerHTML = `<a href="${link}" class="fw-normal link-secondary" data-id="${index}">${description}</a>`;
+    a.outerHTML = `<a href="${link}" class="fw-bold border-0" data-id="${id}">${description}</a>`;
 
     const button = document.createElement('button');
-    postList.append(button);
-    button.outerHTML = `<button type="button" data-id="${index}" 
-    class="btn btn-outline-primary btn-sm 
-    data-bs-toggle="modal" data-bs-target="#modal">${language.t('view')}</button>`;
+    post.append(button);
+    button.outerHTML = `<button type="button" data-id="${id}" 
+    class="btn btn-outline-primary btn-sm data-bs-toggle="modal" data-bs-target="#modal">
+    ${language.t('view')}</button>`;
   });
 };
 
@@ -90,9 +92,17 @@ const getFeed = (url, language) => {
     if (responce.status === 200) {
       const parser = new DOMParser();
       const parsedFeed = parser.parseFromString(responce.data.contents, 'application/xml');
-      return renderFeed(parsedFeed, language);
+      const errorNode = parsedFeed.querySelector('parsererror');
+      const errorText = document.querySelector('.errorText');
+      if (errorNode) {
+        errorText.textContent = language.t('parsingError');
+        throw new Error(language.t('parsingError'));
+      } else {
+        errorText.textContent = '';
+        return renderFeed(parsedFeed, language);
+      }
     }
-    throw new Error('Network response was not ok.');
+    throw new Error(language.t('networkError'));
   });
 };
 
