@@ -1,3 +1,4 @@
+/* eslint-disable no-param-reassign */
 /* eslint-disable import/no-extraneous-dependencies */
 /* eslint-disable import/extensions */
 import './styles.scss';
@@ -7,6 +8,7 @@ import onChange from 'on-change';
 import _ from 'lodash';
 import axios from 'axios';
 import renderSelector from './renders.js';
+import parseRSS from './parser.js';
 
 const makeSchema = (language, target) => {
   yup.setLocale({
@@ -26,50 +28,57 @@ const makeSchema = (language, target) => {
   return schema;
 };
 
-/* const getPosts = () => {
-  const allPosts = document.querySelectorAll('a');
-  const postObjects = [];
-  allPosts.forEach((post) => {
-    const id = post.dataset.id;
-    const description = post.textContent;
-    const
-  })
-}
-*/
-const getContent = (parsedFeed, state) => {
-  const items = parsedFeed.querySelectorAll('item');
-  const postObjects = [];
-  items.forEach((item) => {
-    const id = _.uniqueId();
-    const link = item.querySelector('link').textContent;
-    const description = item.querySelector('title').textContent;
-
-    const post = { id, link, description };
-    postObjects.push(post);
-  });
-  state.formState.posts.push(postObjects);
-  const feed = {};
-  feed.title = parsedFeed.querySelector('title').textContent;
-  feed.description = parsedFeed.querySelector('description').textContent;
-  state.formState.feeds.push(feed);
+const getDomain = (url) => {
+  const newUrl = new URL(url);
+  const domain = newUrl.hostname;
+  return domain;
 };
 
-const parseFeed = (url, language, state) => {
+const refreshRSS = (state, url, language) => {
+  axios
+    .get(`https://allorigins.hexlet.app/get?disableCache=true&url=${encodeURIComponent(url)}`)
+    .then((responce) => {
+      if (responce.status === 200) {
+        const [feed, posts] = parseRSS(responce.data.contents, language);
+        const allPosts = state.formState.posts.flat();
+        const findFeed = allPosts.find((item) => getDomain(item.link) === getDomain(feed.link));
+        const relatedFeedId = findFeed.feedId;
+        const relatedPosts = allPosts.filter((post) => post.feedId === relatedFeedId);
+        const newPosts = _.differenceBy(posts, relatedPosts, 'link');
+
+        newPosts.forEach((post) => {
+          post.id = _.uniqueId();
+          post.feedId = relatedFeedId;
+        });
+        state.formState.posts.push(newPosts);
+      }
+    })
+    .catch(() => console.log(language.t('networkError')));
+  setTimeout(refreshRSS, 5000, state, url, language);
+};
+
+const getContent = (parsedFeed, state, url, language) => {
+  const [feed, posts] = parsedFeed;
+  const feedId = _.uniqueId();
+
+  posts.forEach((post) => {
+    post.id = _.uniqueId();
+    post.feedId = feedId;
+  });
+  state.formState.posts.push(posts);
+
+  feed.id = feedId;
+  state.formState.feeds.push(feed);
+  refreshRSS(state, url, language);
+};
+
+const getRSS = (url, language, state) => {
   axios.get(`https://allorigins.hexlet.app/get?disableCache=true&url=${encodeURIComponent(url)}`).then((responce) => {
     if (responce.status === 200) {
-      const parser = new DOMParser();
-      const parsedFeed = parser.parseFromString(responce.data.contents, 'application/xml');
-      const errorNode = parsedFeed.querySelector('parsererror');
-      const errorText = document.querySelector('.errorText');
-      if (errorNode) {
-        errorText.textContent = language.t('parsingError');
-        throw new Error(language.t('parsingError'));
-      } else {
-        errorText.textContent = '';
-        return getContent(parsedFeed, state);
-      }
-    }
-    throw new Error(language.t('networkError'));
+      const parsedData = parseRSS(responce.data.contents, language);
+      state.formState.allUrls.push(url);
+      getContent(parsedData, state, url, language);
+    } else throw new Error(language.t('networkError'));
   });
 };
 
@@ -84,9 +93,8 @@ export default (state, language) => {
     const schema = makeSchema(language, currentUrls);
     schema.isValid({ rssInput: input.value }).then((result) => {
       if (result === true) {
-        watchedState.formState.allUrls.push(input.value);
         watchedState.formState.isValid = true;
-        parseFeed(input.value, language, watchedState);
+        getRSS(input.value, language, watchedState);
         inputForm.reset();
         input.focus();
       } else {

@@ -50,14 +50,13 @@ const renderPosts = (feedData, language) => {
     const post = document.createElement('li');
     post.classList.add('list-group-item', 'd-flex', 'justify-content-between');
     postList.append(post);
-    const { id, link, description } = item;
     const a = document.createElement('a');
     post.append(a);
-    a.outerHTML = `<a href="${link}" class="fw-bold border-0" data-id="${id}">${description}</a>`;
+    a.outerHTML = `<a href="${item.link}" class="fw-bold border-0" data-id="${item.id}">${item.title}</a>`;
 
     const button = document.createElement('button');
     post.append(button);
-    button.outerHTML = `<button type="button" data-id="${id}" 
+    button.outerHTML = `<button type="button" data-id="${item.id}" 
     class="btn btn-outline-primary btn-sm data-bs-toggle="modal" data-bs-target="#modal">
     ${language.t('view')}</button>`;
   });
