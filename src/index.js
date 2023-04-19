@@ -95,16 +95,19 @@ const getContent = (parsedFeed, state, url, language) => {
 };
 
 const getRSS = (url, language, state) => {
-  axios.get(`https://allorigins.hexlet.app/get?disableCache=true&url=${encodeURIComponent(url)}`).then((responce) => {
-    if (responce.status === 200) {
-      const parsedData = parseRSS(responce.data.contents, language);
-      state.formState.allUrls.push(url);
-      getContent(parsedData, state, url, language);
-    } else {
+  axios
+    .get(`https://allorigins.hexlet.app/get?disableCache=true&url=${encodeURIComponent(url)}`)
+    .then((responce) => {
+      if (responce.status === 200) {
+        const parsedData = parseRSS(responce.data.contents, language);
+        state.formState.allUrls.push(url);
+        getContent(parsedData, state, url, language);
+      }
+    })
+    .catch(() => {
       state.formState.errors = language.t('networkError');
       setTimeout(getRSS, 5000, url, language, state);
-    }
-  });
+    });
 };
 
 export default (state, language) => {
