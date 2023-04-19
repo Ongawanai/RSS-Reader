@@ -53,7 +53,9 @@ const refreshRSS = (state, url, language) => {
         state.formState.posts.push(newPosts);
       }
     })
-    .catch(() => console.log(language.t('networkError')));
+    .catch(() => {
+      state.formState.errors = language.t('networkError');
+    });
   setTimeout(refreshRSS, 5000, state, url, language);
 };
 
@@ -98,7 +100,7 @@ const getRSS = (url, language, state) => {
       const parsedData = parseRSS(responce.data.contents, language);
       state.formState.allUrls.push(url);
       getContent(parsedData, state, url, language);
-    } else throw new Error(language.t('networkError'));
+    } else state.formState.errors = language.t('networkError');
   });
 };
 

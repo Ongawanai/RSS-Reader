@@ -8,7 +8,7 @@ const init = () => {
   const state = {
     formState: {
       isValid: '',
-      errors: [],
+      errors: '',
       inputText: '',
       allUrls: [],
       posts: [],

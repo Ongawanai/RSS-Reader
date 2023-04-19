@@ -126,6 +126,12 @@ const renderModal = (post, language) => {
   postBody.classList.add('fw-normal');
 };
 
+const renderError = (errorMessage) => {
+  const statusInfo = document.querySelector('.statusInfo');
+  statusInfo.classList.replace('successText', 'errorText');
+  statusInfo.textContent = errorMessage;
+};
+
 const renderSelector = (path, value, language) => {
   switch (path) {
     case 'formState.allUrls':
@@ -141,6 +147,9 @@ const renderSelector = (path, value, language) => {
       break;
     case 'formState.currentModal':
       renderModal(value, language);
+      break;
+    case 'formState.errors':
+      renderError(value);
       break;
     default:
       throw new Error(`Unknown process State: ${path}`);

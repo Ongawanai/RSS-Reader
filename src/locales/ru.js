@@ -11,7 +11,7 @@ export default {
       feeds: 'Фиды',
       view: 'Просмотр',
       parsingError: 'Ресурс не содержит валидный RSS',
-      networkError: 'Ошибка при обращении к сети',
+      networkError: 'Ошибка сети',
       readAll: 'Читать полностью',
       close: 'Закрыть',
       empty: 'Не должно быть пустым',
