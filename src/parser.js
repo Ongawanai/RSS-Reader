@@ -22,12 +22,12 @@ const parseRSS = (rss, language) => {
   const parser = new DOMParser();
   const parsedRSS = parser.parseFromString(rss, 'application/xml');
   const errorNode = parsedRSS.querySelector('parsererror');
-  const errorText = document.querySelector('.errorText');
+  const textInfo = document.querySelector('.statusInfo');
   if (errorNode) {
-    errorText.textContent = language.t('parsingError');
+    textInfo.classList.replace('successText', 'errorText');
+    textInfo.textContent = language.t('parsingError');
     throw new Error(language.t('parsingError'));
   } else {
-    errorText.textContent = '';
     return [getFeed(parsedRSS), getPosts(parsedRSS)];
   }
 };

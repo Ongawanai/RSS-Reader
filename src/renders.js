@@ -1,18 +1,22 @@
 const renderStatus = (status, language) => {
   const form = document.querySelector('#url-input');
-  const errorText = document.querySelector('.errorText');
+  const statusInfo = document.querySelector('.statusInfo');
+  console.log(status);
   switch (status) {
     case true:
       form.classList.remove('is-invalid');
-      errorText.textContent = '';
+      statusInfo.textContent = language.t('success');
+      statusInfo.classList.replace('errorText', 'successText');
       break;
     case false:
       form.classList.add('is-invalid');
-      errorText.textContent = language.t('url');
+      statusInfo.textContent = language.t('url');
+      statusInfo.classList.replace('successText', 'errorText');
       break;
     case 'already exist':
       form.classList.add('is-invalid');
-      errorText.textContent = language.t('notOneOf');
+      statusInfo.textContent = language.t('notOneOf');
+      statusInfo.classList.replace('successText', 'errorText');
       break;
     default:
       throw new Error(`${language.t('wrongStatus')}: ${status}`);
@@ -46,9 +50,9 @@ const firstRenderFeed = (language) => {
 
 const renderPosts = (feedData, language) => {
   // Проверяем, добавлены ли уже какие-либо фиды
-  const postContaainer = document.querySelector('.posts');
+  const postContainer = document.querySelector('.posts');
 
-  if (postContaainer.childElementCount === 0) {
+  if (postContainer.childElementCount === 0) {
     firstRenderFeed(language);
   }
 
@@ -56,7 +60,7 @@ const renderPosts = (feedData, language) => {
 
   const postList = document.createElement('ul');
   postList.classList.add('list-group', 'border-0');
-  postContaainer.append(postList);
+  postContainer.append(postList);
 
   // Создаём посты
   feedData[0].forEach((item) => {

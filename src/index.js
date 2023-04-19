@@ -70,6 +70,8 @@ const getContent = (parsedFeed, state, url, language) => {
   feed.id = feedId;
   state.formState.feeds.push(feed);
 
+  state.formState.isValid = true;
+
   const buttons = document.querySelectorAll(`[data-feed='${feedId}']`);
   buttons.forEach((button) => {
     button.addEventListener('click', (e) => {
@@ -111,7 +113,6 @@ export default (state, language) => {
     const schema = makeSchema(language, currentUrls);
     schema.isValid({ rssInput: input.value }).then((result) => {
       if (result === true) {
-        watchedState.formState.isValid = true;
         getRSS(input.value, language, watchedState);
         inputForm.reset();
         input.focus();

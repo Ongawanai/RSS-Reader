@@ -7,7 +7,7 @@ import resources from './locales/ru.js';
 const init = () => {
   const state = {
     formState: {
-      isValid: true,
+      isValid: '',
       errors: [],
       inputText: '',
       allUrls: [],
