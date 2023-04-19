@@ -7,8 +7,8 @@
 <h2>Vercel Deploy Link</h2>
 https://frontend-project-11-2t4fk9zeq-ongawanai.vercel.app/
 
-<b>Install</b>
+<h3>Install</h3>
 make ci
 
-<b>Build</b>
+<h3>Build</h3>
 make build
