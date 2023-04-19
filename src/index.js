@@ -104,9 +104,16 @@ const getRSS = (url, language, state) => {
         getContent(parsedData, state, url, language);
       }
     })
-    .catch(() => {
-      state.formState.errors = language.t('networkError');
-      setTimeout(getRSS, 5000, url, language, state);
+    .catch((err) => {
+      console.log(err.message);
+      const textInfo = document.querySelector('.statusInfo');
+      textInfo.classList.replace('successText', 'errorText');
+      if (err.message === 'parsingError') {
+        state.formState.errors = language.t('parsingError');
+      } else {
+        state.formState.errors = language.t('networkError');
+        setTimeout(getRSS, 5000, url, language, state);
+      }
     });
 };
 

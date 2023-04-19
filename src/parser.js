@@ -26,7 +26,7 @@ const parseRSS = (rss, language) => {
   if (errorNode) {
     textInfo.classList.replace('successText', 'errorText');
     textInfo.textContent = language.t('parsingError');
-    throw new Error(language.t('parsingError'));
+    throw new Error('parsingError');
   } else {
     return [getFeed(parsedRSS), getPosts(parsedRSS)];
   }
