@@ -76,7 +76,6 @@ const getContent = (parsedFeed, state, url, language) => {
       e.preventDefault();
       const buttonId = button.dataset.id;
       const relatedPost = posts.find((post) => post.id === buttonId);
-      console.log(relatedPost);
       state.formState.currentModal = relatedPost;
     });
   });

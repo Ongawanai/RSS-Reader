@@ -116,7 +116,10 @@ const renderModal = (post, language) => {
 
   modal.classList.add('show');
   modal.style.display = 'block';
-  modal.role = 'dialog';
+
+  const postBody = document.querySelector(`a[data-id='${post.id}']`);
+  postBody.classList.remove('fw-bold');
+  postBody.classList.add('fw-normal');
 };
 
 const renderSelector = (path, value, language) => {
