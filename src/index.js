@@ -100,7 +100,10 @@ const getRSS = (url, language, state) => {
       const parsedData = parseRSS(responce.data.contents, language);
       state.formState.allUrls.push(url);
       getContent(parsedData, state, url, language);
-    } else state.formState.errors = language.t('networkError');
+    } else {
+      state.formState.errors = language.t('networkError');
+      setTimeout(getRSS, 5000, url, language, state);
+    }
   });
 };
 
