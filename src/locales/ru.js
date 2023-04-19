@@ -12,6 +12,8 @@ export default {
       view: 'Просмотр',
       parsingError: 'Ресурс не содержит валидный RSS',
       networkError: 'Ошибка при обращении к сети',
+      readAll: 'Читать полностью',
+      close: 'Закрыть',
     },
   },
 };

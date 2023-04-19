@@ -29,6 +29,19 @@ const firstRenderFeed = (language) => {
   const postHeader = document.createElement('div');
   postHeader.innerHTML = `<h2 class="card-title h4">${language.t('posts')}</h2>`;
   postContrainer.append(postHeader);
+
+  // Подготавливаем модалки:
+  const closeButtons = document.querySelectorAll('.close');
+  closeButtons.forEach((button) => {
+    button.addEventListener('click', () => {
+      const modal = document.querySelector('#modal');
+      modal.classList.remove('show');
+      modal.style.display = 'none';
+    });
+  });
+
+  const modalLink = document.querySelector('.full-article');
+  modalLink.textContent = language.t('readAll');
 };
 
 const renderPosts = (feedData, language) => {
@@ -56,9 +69,8 @@ const renderPosts = (feedData, language) => {
 
     const button = document.createElement('button');
     post.append(button);
-    button.outerHTML = `<button type="button" data-id="${item.id}" 
-    class="btn btn-outline-primary btn-sm data-bs-toggle="modal" data-bs-target="#modal">
-    ${language.t('view')}</button>`;
+    const viewText = language.t('view');
+    button.outerHTML = `<button type="button" data-id="${item.id}" data-feed="${item.feedId}" class="btn btn-sm btn-outline-primary data-bs-toggle="modal" data-bs-target="#modal">${viewText}</button>`;
   });
 };
 
@@ -81,6 +93,32 @@ const renderFeed = (feedData) => {
   feedList.append(feed);
 };
 
+const renderModal = (post, language) => {
+  const modal = document.querySelector('#modal');
+  if (post === 'none') {
+    modal.classList.remove('show');
+    modal.style.display = 'none';
+    return;
+  }
+  const { title, description, link } = post;
+  const modalTitle = document.querySelector('.modal-title');
+  modalTitle.textContent = title;
+
+  const modalBody = document.querySelector('.modal-body');
+  modalBody.textContent = description;
+
+  const modalFooter = document.querySelector('.modal-footer');
+
+  modalFooter.querySelector('button').textContent = language.t('close');
+
+  const modalLink = document.querySelector('.full-article');
+  modalLink.setAttribute('href', link);
+
+  modal.classList.add('show');
+  modal.style.display = 'block';
+  modal.role = 'dialog';
+};
+
 const renderSelector = (path, value, language) => {
   switch (path) {
     case 'formState.allUrls':
@@ -93,6 +131,9 @@ const renderSelector = (path, value, language) => {
       break;
     case 'formState.feeds':
       renderFeed(value.slice(-1));
+      break;
+    case 'formState.currentModal':
+      renderModal(value, language);
       break;
     default:
       throw new Error(`Unknown process State: ${path}`);

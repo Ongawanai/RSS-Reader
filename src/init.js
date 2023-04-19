@@ -13,6 +13,7 @@ const init = () => {
       allUrls: [],
       posts: [],
       feeds: [],
+      currentModal: '',
     },
   };
   const i18nextInstance = i18next.createInstance();

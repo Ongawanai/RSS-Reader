@@ -69,6 +69,25 @@ const getContent = (parsedFeed, state, url, language) => {
 
   feed.id = feedId;
   state.formState.feeds.push(feed);
+
+  const buttons = document.querySelectorAll(`[data-feed='${feedId}']`);
+  buttons.forEach((button) => {
+    button.addEventListener('click', (e) => {
+      e.preventDefault();
+      const buttonId = button.dataset.id;
+      const relatedPost = posts.find((post) => post.id === buttonId);
+      console.log(relatedPost);
+      state.formState.currentModal = relatedPost;
+    });
+  });
+
+  const closeButtons = document.querySelectorAll('.close');
+  closeButtons.forEach((button) => {
+    button.addEventListener('click', () => {
+      state.formState.currentModal = 'none';
+    });
+  });
+
   refreshRSS(state, url, language);
 };
 

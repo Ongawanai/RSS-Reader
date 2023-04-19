@@ -5,6 +5,21 @@
         <title>RSS Reader</title>
     </head>
     <body class="d-flex flex-column min-vh-100">
+        <div class="modal fade" tabindex="-1" id="modal" aria-modal="true">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title"></h5>
+                        <button type="button" class="btn-close close"></button>
+                    </div>
+                    <div class="modal-body text-break"></div>
+                    <div class="modal-footer">
+                        <a class='btn btn-primary full-article' role='button'></a>
+                        <button type="button" class="btn btn-secondary close" data-bs-dismiss="modal"></button>
+                    </div>
+                </div>
+            </div>
+        </div>
         <section class="container-fluid bg-dark p-3">
             <div class="row"></div>
             <div class="text-white">
