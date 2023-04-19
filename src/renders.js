@@ -69,7 +69,7 @@ const renderPosts = (feedData, language) => {
     postList.append(post);
     const a = document.createElement('a');
     post.append(a);
-    a.outerHTML = `<a href="${item.link}" class="fw-bold border-0" data-id="${item.id}">${item.title}</a>`;
+    a.outerHTML = `<a href="${item.link}" class="fw-bold" data-id="${item.id}">${item.title}</a>`;
 
     const button = document.createElement('button');
     post.append(button);
