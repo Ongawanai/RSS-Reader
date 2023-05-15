@@ -1,14 +1,13 @@
 const renderStatus = (status, language) => {
   const form = document.querySelector('#url-input');
   const statusInfo = document.querySelector('.statusInfo');
-  console.log(status);
   switch (status) {
     case true:
       form.classList.remove('is-invalid');
       statusInfo.textContent = language.t('success');
       statusInfo.classList.replace('errorText', 'successText');
       break;
-    case false:
+    case 'not valid':
       form.classList.add('is-invalid');
       statusInfo.textContent = language.t('url');
       statusInfo.classList.replace('successText', 'errorText');
@@ -25,14 +24,22 @@ const renderStatus = (status, language) => {
 
 const firstRenderFeed = (language) => {
   const feedContainer = document.querySelector('.feeds');
-  const feedHeader = document.createElement('div');
-  feedHeader.innerHTML = `<h2 class="card-title h4">${language.t('feeds')}</h2>`;
-  feedContainer.append(feedHeader);
+  const feed = document.createElement('div');
+  const feedHeader = document.createElement('h2');
+  feedHeader.classList.add('card-title', 'h4');
+  feedHeader.textContent = `${language.t('feeds')}`;
+
+  feed.append(feedHeader);
+  feedContainer.append(feed);
 
   const postContrainer = document.querySelector('.posts');
-  const postHeader = document.createElement('div');
-  postHeader.innerHTML = `<h2 class="card-title h4">${language.t('posts')}</h2>`;
-  postContrainer.append(postHeader);
+  const post = document.createElement('div');
+  const postHeader = document.createElement('h2');
+  postHeader.classList.add('card-title', 'h4');
+  postHeader.textContent = `${language.t('posts')}`;
+
+  post.append(postHeader);
+  postContrainer.append(post);
 
   // Подготавливаем модалки:
   const closeButtons = document.querySelectorAll('.close');
@@ -126,10 +133,11 @@ const renderModal = (post, language) => {
   postBody.classList.add('fw-normal');
 };
 
-const renderError = (errorMessage) => {
+const renderError = (errorMessage, language) => {
+  const errorText = language.t(errorMessage);
   const statusInfo = document.querySelector('.statusInfo');
   statusInfo.classList.replace('successText', 'errorText');
-  statusInfo.textContent = errorMessage;
+  statusInfo.textContent = errorText;
 };
 
 const renderSelector = (path, value, language) => {
@@ -149,7 +157,7 @@ const renderSelector = (path, value, language) => {
       renderModal(value, language);
       break;
     case 'formState.errors':
-      renderError(value);
+      renderError(value, language);
       break;
     default:
       throw new Error(`Unknown process State: ${path}`);

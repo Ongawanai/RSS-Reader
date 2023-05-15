@@ -1,6 +1,3 @@
-/* eslint-disable no-param-reassign */
-/* eslint-disable import/no-extraneous-dependencies */
-/* eslint-disable import/extensions */
 import './styles.scss';
 import 'bootstrap';
 import * as yup from 'yup';
@@ -11,16 +8,6 @@ import renderSelector from './renders.js';
 import parseRSS from './parser.js';
 
 const makeSchema = (language, target) => {
-  yup.setLocale({
-    string: {
-      default: `${language.t('string')}`,
-      url: `${language.t('url')}`,
-    },
-    mixed: {
-      notOneOf: `${language.t('notOneOf')}`,
-    },
-  });
-
   const schema = yup.object({
     rssInput: yup.string().url().nullable().notOneOf(target),
   });
@@ -28,33 +15,31 @@ const makeSchema = (language, target) => {
   return schema;
 };
 
-const getDomain = (url) => {
-  const newUrl = new URL(url);
-  const domain = newUrl.hostname;
-  return domain;
-};
+const makeUrl = (url) => `https://allorigins.hexlet.app/get?disableCache=true&url=${encodeURIComponent(url)}`;
 
 const refreshRSS = (state, url, language) => {
   axios
-    .get(`https://allorigins.hexlet.app/get?disableCache=true&url=${encodeURIComponent(url)}`)
+    .get(makeUrl(url))
     .then((responce) => {
-      if (responce.status === 200) {
-        const [feed, posts] = parseRSS(responce.data.contents, language);
-        const allPosts = state.formState.posts.flat();
-        const findFeed = allPosts.find((item) => getDomain(item.link) === getDomain(feed.link));
-        const relatedFeedId = findFeed.feedId;
-        const relatedPosts = allPosts.filter((post) => post.feedId === relatedFeedId);
-        const newPosts = _.differenceBy(posts, relatedPosts, 'link');
+      const [feed, posts] = parseRSS(responce.data.contents);
+      const allPosts = state.formState.posts.flat();
+      const findFeed = allPosts.find((item) => {
+        const itemHostname = new URL(item.link).hostname;
+        const feedHostname = new URL(feed.link).hostname;
+        return itemHostname === feedHostname;
+      });
+      const relatedFeedId = findFeed.feedId;
+      const relatedPosts = allPosts.filter((post) => post.feedId === relatedFeedId);
+      const newPosts = _.differenceBy(posts, relatedPosts, 'link');
 
-        newPosts.forEach((post) => {
-          post.id = _.uniqueId();
-          post.feedId = relatedFeedId;
-        });
-        state.formState.posts.push(newPosts);
-      }
+      newPosts.forEach((post) => {
+        post.id = _.uniqueId();
+        post.feedId = relatedFeedId;
+      });
+      state.formState.posts.push(newPosts);
     })
     .catch(() => {
-      state.formState.errors = language.t('networkError');
+      state.formState.errors = 'networkError';
     });
   setTimeout(refreshRSS, 5000, state, url, language);
 };
@@ -98,21 +83,15 @@ const getRSS = (url, language, state) => {
   axios
     .get(`https://allorigins.hexlet.app/get?disableCache=true&url=${encodeURIComponent(url)}`)
     .then((responce) => {
-      if (responce.status === 200) {
-        const parsedData = parseRSS(responce.data.contents, language);
-        state.formState.allUrls.push(url);
-        getContent(parsedData, state, url, language);
-      }
+      const parsedData = parseRSS(responce.data.contents);
+      state.formState.allUrls.push(url);
+      getContent(parsedData, state, url, language);
     })
     .catch((err) => {
-      console.log(err.message);
-      const textInfo = document.querySelector('.statusInfo');
-      textInfo.classList.replace('successText', 'errorText');
       if (err.message === 'parsingError') {
-        state.formState.errors = language.t('parsingError');
+        state.formState.errors = 'parsingError';
       } else {
-        state.formState.errors = language.t('networkError');
-        setTimeout(getRSS, 5000, url, language, state);
+        state.formState.errors = 'networkError';
       }
     });
 };
@@ -132,7 +111,7 @@ export default (state, language) => {
         inputForm.reset();
         input.focus();
       } else {
-        const errorType = currentUrls.includes(input.value) ? 'already exist' : false;
+        const errorType = currentUrls.includes(input.value) ? 'already exist' : 'not valid';
         watchedState.formState.isValid = errorType;
       }
     });

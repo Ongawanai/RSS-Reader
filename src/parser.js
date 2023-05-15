@@ -18,14 +18,11 @@ const getPosts = (parsedRSS) => {
   return postsList;
 };
 
-const parseRSS = (rss, language) => {
+const parseRSS = (rss) => {
   const parser = new DOMParser();
   const parsedRSS = parser.parseFromString(rss, 'application/xml');
   const errorNode = parsedRSS.querySelector('parsererror');
-  const textInfo = document.querySelector('.statusInfo');
   if (errorNode) {
-    textInfo.classList.replace('successText', 'errorText');
-    textInfo.textContent = language.t('parsingError');
     throw new Error('parsingError');
   } else {
     return [getFeed(parsedRSS), getPosts(parsedRSS)];
