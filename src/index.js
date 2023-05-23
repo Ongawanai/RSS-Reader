@@ -1,19 +1,11 @@
 import './styles.scss';
 import 'bootstrap';
-import * as yup from 'yup';
 import onChange from 'on-change';
 import _ from 'lodash';
 import axios from 'axios';
+import validator from './validator.js';
 import renderSelector from './renders.js';
 import parseRSS from './parser.js';
-
-const makeSchema = (target) => {
-  const schema = yup.object({
-    rssInput: yup.string().url().nullable().notOneOf(target),
-  });
-
-  return schema;
-};
 
 const makeUrl = (url) => {
   const fullUrl = new URL(`https://allorigins.hexlet.app/get?url=${encodeURIComponent(url)}`);
@@ -115,9 +107,9 @@ export default (state, language) => {
 
   inputForm.addEventListener('submit', (e) => {
     e.preventDefault();
-    const schema = makeSchema(currentUrls);
+    const schema = validator(language, currentUrls);
     schema
-      .isValid({ rssInput: input.value })
+      .validate({ rssInput: input.value })
       .then(() => {
         getRSS(input.value, watchedState);
         inputForm.reset();
