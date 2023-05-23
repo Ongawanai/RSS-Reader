@@ -39,9 +39,8 @@ const firstRenderFeed = (language) => {
   postHeader.textContent = `${language.t('posts')}`;
 
   post.append(postHeader);
-  postContrainer.append(post);
+  postContrainer.prepend(post);
 
-  // Подготавливаем модалки:
   const closeButtons = document.querySelectorAll('.close');
   closeButtons.forEach((button) => {
     button.addEventListener('click', () => {
@@ -56,20 +55,15 @@ const firstRenderFeed = (language) => {
 };
 
 const renderPosts = (feedData, language) => {
-  // Проверяем, добавлены ли уже какие-либо фиды
-  const postContainer = document.querySelector('.posts');
+  const postContainer = document.querySelector('.post-list');
 
   if (postContainer.childElementCount === 0) {
     firstRenderFeed(language);
   }
-
-  // Создаём контейнер для постов
-
   const postList = document.createElement('ul');
   postList.classList.add('list-group', 'border-0');
   postContainer.append(postList);
 
-  // Создаём посты
   feedData[0].forEach((item) => {
     const post = document.createElement('li');
     post.classList.add('list-group-item', 'd-flex', 'justify-content-between');
@@ -92,7 +86,6 @@ const renderFeed = (feedData) => {
   feedList.classList.add('list-group', 'border-0');
   feedContainer.append(feedList);
 
-  // Создаём фид
   const feed = document.createElement('li');
   feed.classList.add('list-group-item', 'border-0');
   const feedTitle = document.createElement('h3');

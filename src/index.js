@@ -7,7 +7,7 @@ import axios from 'axios';
 import renderSelector from './renders.js';
 import parseRSS from './parser.js';
 
-const makeSchema = (language, target) => {
+const makeSchema = (target) => {
   const schema = yup.object({
     rssInput: yup.string().url().nullable().notOneOf(target),
   });
@@ -15,9 +15,13 @@ const makeSchema = (language, target) => {
   return schema;
 };
 
-const makeUrl = (url) => `https://allorigins.hexlet.app/get?disableCache=true&url=${encodeURIComponent(url)}`;
+const makeUrl = (url) => {
+  const fullUrl = new URL(`https://allorigins.hexlet.app/get?url=${encodeURIComponent(url)}`);
+  fullUrl.searchParams.set('disableCache', true);
+  return fullUrl;
+};
 
-const refreshRSS = (state, url, language) => {
+const refreshRSS = (state, url) => {
   axios
     .get(makeUrl(url))
     .then((responce) => {
@@ -36,15 +40,17 @@ const refreshRSS = (state, url, language) => {
         post.id = _.uniqueId();
         post.feedId = relatedFeedId;
       });
-      state.formState.posts.push(newPosts);
+      if (newPosts.length > 0) {
+        state.formState.posts.push(newPosts);
+      }
     })
     .catch(() => {
       state.formState.errors = 'networkError';
     });
-  setTimeout(refreshRSS, 5000, state, url, language);
+  setTimeout(refreshRSS, 5000, state, url);
 };
 
-const getContent = (parsedFeed, state, url, language) => {
+const makeContent = (parsedFeed, state, url) => {
   const [feed, posts] = parsedFeed;
   const feedId = _.uniqueId();
 
@@ -59,33 +65,38 @@ const getContent = (parsedFeed, state, url, language) => {
 
   state.formState.isValid = true;
 
-  const buttons = document.querySelectorAll(`[data-feed='${feedId}']`);
-  buttons.forEach((button) => {
-    button.addEventListener('click', (e) => {
+  const postList = document.querySelector('.post-list');
+
+  if (postList.childElementCount === 1) {
+    postList.addEventListener('click', (e) => {
       e.preventDefault();
-      const buttonId = button.dataset.id;
-      const relatedPost = posts.find((post) => post.id === buttonId);
-      state.formState.currentModal = relatedPost;
+      if (e.target.hasAttribute('data-feed')) {
+        const buttonId = e.target.dataset.id;
+        const allPosts = state.formState.posts.flat();
+        const relatedPost = allPosts.find((post) => post.id === buttonId);
+        state.formState.currentModal = relatedPost;
+      }
     });
-  });
-
-  const closeButtons = document.querySelectorAll('.close');
-  closeButtons.forEach((button) => {
-    button.addEventListener('click', () => {
-      state.formState.currentModal = 'none';
+  }
+  if (postList.childElementCount === 1) {
+    const closeButtons = document.querySelectorAll('.close');
+    closeButtons.forEach((button) => {
+      button.addEventListener('click', () => {
+        state.formState.currentModal = 'none';
+      });
     });
-  });
+  }
 
-  refreshRSS(state, url, language);
+  refreshRSS(state, url);
 };
 
-const getRSS = (url, language, state) => {
+const getRSS = (url, state) => {
   axios
-    .get(`https://allorigins.hexlet.app/get?disableCache=true&url=${encodeURIComponent(url)}`)
+    .get(makeUrl(url))
     .then((responce) => {
       const parsedData = parseRSS(responce.data.contents);
       state.formState.allUrls.push(url);
-      getContent(parsedData, state, url, language);
+      makeContent(parsedData, state, url);
     })
     .catch((err) => {
       if (err.message === 'parsingError') {
@@ -104,16 +115,17 @@ export default (state, language) => {
 
   inputForm.addEventListener('submit', (e) => {
     e.preventDefault();
-    const schema = makeSchema(language, currentUrls);
-    schema.isValid({ rssInput: input.value }).then((result) => {
-      if (result === true) {
-        getRSS(input.value, language, watchedState);
+    const schema = makeSchema(currentUrls);
+    schema
+      .isValid({ rssInput: input.value })
+      .then(() => {
+        getRSS(input.value, watchedState);
         inputForm.reset();
         input.focus();
-      } else {
+      })
+      .catch(() => {
         const errorType = currentUrls.includes(input.value) ? 'already exist' : 'not valid';
         watchedState.formState.isValid = errorType;
-      }
-    });
+      });
   });
 };
