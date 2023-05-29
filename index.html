@@ -5,39 +5,42 @@
         <title>RSS Reader</title>
     </head>
     <body class="d-flex flex-column min-vh-100">
-        <div class="modal fade" tabindex="-1" id="modal" aria-modal="true">
-            <div class="modal-dialog">
-                <div class="modal-content">
-                    <div class="modal-header">
-                        <h5 class="modal-title"></h5>
-                        <button type="button" class="btn-close close"></button>
-                    </div>
-                    <div class="modal-body text-break"></div>
-                    <div class="modal-footer">
-                        <a class='btn btn-primary full-article' role='button'></a>
-                        <button type="button" class="btn btn-secondary close" data-bs-dismiss="modal"></button>
-                    </div>
+        <div class="modal fade" tabindex="-1" id="modalWindow" role="dialog" aria-labelledby="modalWindowLabel" aria-hidden="true">
+            <div class="modal-dialog" role="document">
+              <div class="modal-content">
+                <div class="modal-header">
+                  <h5 class="modal-title" id="modalWindowLabel"></h5>
+                  <button type="button" class="btn btn-secondary close" data-bs-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                  </button>
                 </div>
+                <div class="modal-body">
+                </div>
+                <div class="modal-footer">
+                  <a class='btn btn-primary full-article' role='button'></a>
+                  <button type="button" class="btn btn-secondary close" data-bs-dismiss="modal"></button>
+                </div>
+              </div>
             </div>
-        </div>
+          </div>
         <section class="container-fluid bg-dark p-3">
             <div class="row"></div>
             <div class="text-white">
-                <h1>RSS агрегатор</h1>
-                <p>Начните читать RSS сегодня! Это легко, это красиво.</p>
+                <h1 class="rss-header"></h1>
+                <p class="start-reading"></p>
                 <form action class="rss-form text-body ">
                         <div class="row">
                             <div class="col">
-                                <div clas="rss-text">
+                                <div class="rss-text">
                                     <input id="url-input" autofocus required name="url" aria-label="url" class="form-control w-100" placeholder="Ссылка RSS" autocomplete="off">
                                 </div>
                             </div>
                             <div class="button">
-                                <button type="submit" class="h-100 btn btn-primary btn-lg px-sm-5" aria-label="add">Добавить</button>
+                                <button type="submit" class="h-100 btn btn-primary btn-lg px-sm-5 add-button" aria-label="add"></button>
                             </div>
                         </div>
                 </form>
-                <p class="mt-2 mb-0 helping-text">Пример: https://ru.hexlet.io/lessons.rss</p>
+                <p class="mt-2 mb-0 helping-text"></p>
                 <p class="statusInfo successText"></p>
             </div>
         </div>

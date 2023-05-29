@@ -16,6 +16,9 @@ export default {
       close: 'Закрыть',
       empty: 'Не должно быть пустым',
       success: 'RSS успешно загружен',
+      rssHeader: 'RSS агрегатор',
+      startReading: 'Начните читать RSS сегодня! Это легко, это красиво.',
+      helpingText: 'Пример: https://ru.hexlet.io/lessons.rss',
     },
   },
 };

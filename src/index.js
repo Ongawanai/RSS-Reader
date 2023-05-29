@@ -8,7 +8,8 @@ import renderSelector from './renders.js';
 import parseRSS from './parser.js';
 
 const makeUrl = (url) => {
-  const fullUrl = new URL(`https://allorigins.hexlet.app/get?url=${encodeURIComponent(url)}`);
+  const fullUrl = new URL('https://allorigins.hexlet.app/get');
+  fullUrl.searchParams.set('url', url);
   fullUrl.searchParams.set('disableCache', true);
   return fullUrl;
 };
@@ -57,28 +58,6 @@ const makeContent = (parsedFeed, state, url) => {
 
   state.formState.isValid = true;
 
-  const postList = document.querySelector('.post-list');
-
-  if (postList.childElementCount === 1) {
-    postList.addEventListener('click', (e) => {
-      e.preventDefault();
-      if (e.target.hasAttribute('data-feed')) {
-        const buttonId = e.target.dataset.id;
-        const allPosts = state.formState.posts.flat();
-        const relatedPost = allPosts.find((post) => post.id === buttonId);
-        state.formState.currentModal = relatedPost;
-      }
-    });
-  }
-  if (postList.childElementCount === 1) {
-    const closeButtons = document.querySelectorAll('.close');
-    closeButtons.forEach((button) => {
-      button.addEventListener('click', () => {
-        state.formState.currentModal = 'none';
-      });
-    });
-  }
-
   refreshRSS(state, url);
 };
 
@@ -100,10 +79,33 @@ const getRSS = (url, state) => {
 };
 
 export default (state, language) => {
+  const elements = {
+    formHeader: document.querySelector('.rss-header'),
+    startReadingP: document.querySelector('.start-reading'),
+    addButton: document.querySelector('.add-button'),
+    helpingText: document.querySelector('.helping-text'),
+    postList: document.querySelector('.post-list'),
+  };
+
+  elements.formHeader.textContent = language.t('rssHeader');
+  elements.startReadingP.textContent = language.t('startReading');
+  elements.addButton.textContent = language.t('add');
+  elements.helpingText.textContent = language.t('helpingText');
+
   const watchedState = onChange(state, (path, value) => renderSelector(path, value, language));
   const inputForm = document.querySelector('.rss-form');
   const input = document.querySelector('#url-input');
   const currentUrls = watchedState.formState.allUrls;
+
+  elements.postList.addEventListener('click', (e) => {
+    e.preventDefault();
+    if (e.target.hasAttribute('data-feed')) {
+      const buttonId = e.target.dataset.id;
+      const allPosts = state.formState.posts.flat();
+      const relatedPost = allPosts.find((post) => post.id === buttonId);
+      watchedState.formState.currentModal = relatedPost;
+    }
+  });
 
   inputForm.addEventListener('submit', (e) => {
     e.preventDefault();

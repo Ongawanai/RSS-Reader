@@ -41,15 +41,6 @@ const firstRenderFeed = (language) => {
   post.append(postHeader);
   postContrainer.prepend(post);
 
-  const closeButtons = document.querySelectorAll('.close');
-  closeButtons.forEach((button) => {
-    button.addEventListener('click', () => {
-      const modal = document.querySelector('#modal');
-      modal.classList.remove('show');
-      modal.style.display = 'none';
-    });
-  });
-
   const modalLink = document.querySelector('.full-article');
   modalLink.textContent = language.t('readAll');
 };
@@ -75,7 +66,7 @@ const renderPosts = (feedData, language) => {
     const button = document.createElement('button');
     post.append(button);
     const viewText = language.t('view');
-    button.outerHTML = `<button type="button" data-id="${item.id}" data-feed="${item.feedId}" class="btn btn-sm btn-outline-primary data-bs-toggle="modal" data-bs-target="#modal">${viewText}</button>`;
+    button.outerHTML = `<button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#modalWindow" data-id="${item.id}" data-feed="${item.feedId}">${viewText}</button>`;
   });
 };
 
@@ -98,12 +89,6 @@ const renderFeed = (feedData) => {
 };
 
 const renderModal = (post, language) => {
-  const modal = document.querySelector('#modal');
-  if (post === 'none') {
-    modal.classList.remove('show');
-    modal.style.display = 'none';
-    return;
-  }
   const { title, description, link } = post;
   const modalTitle = document.querySelector('.modal-title');
   modalTitle.textContent = title;
@@ -117,9 +102,6 @@ const renderModal = (post, language) => {
 
   const modalLink = document.querySelector('.full-article');
   modalLink.setAttribute('href', link);
-
-  modal.classList.add('show');
-  modal.style.display = 'block';
 
   const postBody = document.querySelector(`a[data-id='${post.id}']`);
   postBody.classList.remove('fw-bold');
