@@ -19,6 +19,7 @@ export default {
       rssHeader: 'RSS агрегатор',
       startReading: 'Начните читать RSS сегодня! Это легко, это красиво.',
       helpingText: 'Пример: https://ru.hexlet.io/lessons.rss',
+      inputPlaceholder: 'Ссылка RSS',
     },
   },
 };

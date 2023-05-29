@@ -84,6 +84,7 @@ export default (state, language) => {
     startReadingP: document.querySelector('.start-reading'),
     addButton: document.querySelector('.add-button'),
     helpingText: document.querySelector('.helping-text'),
+    inputPlaceholder: document.querySelector('#url-input'),
     postList: document.querySelector('.post-list'),
   };
 
@@ -91,6 +92,7 @@ export default (state, language) => {
   elements.startReadingP.textContent = language.t('startReading');
   elements.addButton.textContent = language.t('add');
   elements.helpingText.textContent = language.t('helpingText');
+  elements.inputPlaceholder.placeholder = language.t('inputPlaceholder');
 
   const watchedState = onChange(state, (path, value) => renderSelector(path, value, language));
   const inputForm = document.querySelector('.rss-form');
