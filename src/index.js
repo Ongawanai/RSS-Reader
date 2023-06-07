@@ -15,31 +15,26 @@ const makeUrl = (url) => {
 };
 
 const refreshRSS = (state, url) => {
-  axios
-    .get(makeUrl(url))
-    .then((responce) => {
-      const [feed, posts] = parseRSS(responce.data.contents);
-      const allPosts = state.formState.posts.flat();
-      const findFeed = allPosts.find((item) => {
-        const itemHostname = new URL(item.link).hostname;
-        const feedHostname = new URL(feed.link).hostname;
-        return itemHostname === feedHostname;
-      });
-      const relatedFeedId = findFeed.feedId;
-      const relatedPosts = allPosts.filter((post) => post.feedId === relatedFeedId);
-      const newPosts = _.differenceBy(posts, relatedPosts, 'link');
-
-      newPosts.forEach((post) => {
-        post.id = _.uniqueId();
-        post.feedId = relatedFeedId;
-      });
-      if (newPosts.length > 0) {
-        state.formState.posts.push(newPosts);
-      }
-    })
-    .catch(() => {
-      state.formState.errors = 'networkError';
+  axios.get(makeUrl(url)).then((responce) => {
+    const [feed, posts] = parseRSS(responce.data.contents);
+    const allPosts = state.posts.flat();
+    const findFeed = allPosts.find((item) => {
+      const itemHostname = new URL(item.link).hostname;
+      const feedHostname = new URL(feed.link).hostname;
+      return itemHostname === feedHostname;
     });
+    const relatedFeedId = findFeed.feedId;
+    const relatedPosts = allPosts.filter((post) => post.feedId === relatedFeedId);
+    const newPosts = _.differenceBy(posts, relatedPosts, 'link');
+
+    newPosts.forEach((post) => {
+      post.id = _.uniqueId();
+      post.feedId = relatedFeedId;
+    });
+    if (newPosts.length > 0) {
+      state.posts.unshift(newPosts);
+    }
+  });
   setTimeout(refreshRSS, 5000, state, url);
 };
 
@@ -51,12 +46,12 @@ const makeContent = (parsedFeed, state, url) => {
     post.id = _.uniqueId();
     post.feedId = feedId;
   });
-  state.formState.posts.push(posts);
+  state.posts.unshift(posts);
 
   feed.id = feedId;
-  state.formState.feeds.push(feed);
+  state.feeds.unshift(feed);
 
-  state.formState.isValid = true;
+  state.isValid = true;
 
   refreshRSS(state, url);
 };
@@ -66,14 +61,14 @@ const getRSS = (url, state) => {
     .get(makeUrl(url))
     .then((responce) => {
       const parsedData = parseRSS(responce.data.contents);
-      state.formState.allUrls.push(url);
+      state.allUrls.push(url);
       makeContent(parsedData, state, url);
     })
     .catch((err) => {
       if (err.message === 'parsingError') {
-        state.formState.errors = 'parsingError';
+        state.errors = 'parsingError';
       } else {
-        state.formState.errors = 'networkError';
+        state.errors = 'networkError';
       }
     });
 };
@@ -97,15 +92,15 @@ export default (state, language) => {
   const watchedState = onChange(state, (path, value) => renderSelector(path, value, language));
   const inputForm = document.querySelector('.rss-form');
   const input = document.querySelector('#url-input');
-  const currentUrls = watchedState.formState.allUrls;
+  const currentUrls = watchedState.allUrls;
 
   elements.postList.addEventListener('click', (e) => {
     e.preventDefault();
     if (e.target.hasAttribute('data-feed')) {
       const buttonId = e.target.dataset.id;
-      const allPosts = state.formState.posts.flat();
+      const allPosts = state.posts.flat();
       const relatedPost = allPosts.find((post) => post.id === buttonId);
-      watchedState.formState.currentModal = relatedPost;
+      watchedState.currentModal = relatedPost;
     }
   });
 
@@ -121,7 +116,7 @@ export default (state, language) => {
       })
       .catch(() => {
         const errorType = currentUrls.includes(input.value) ? 'already exist' : 'not valid';
-        watchedState.formState.isValid = errorType;
+        watchedState.isValid = errorType;
       });
   });
 };

@@ -5,15 +5,13 @@ import resources from './locales/ru.js';
 
 const init = () => {
   const state = {
-    formState: {
-      isValid: '',
-      errors: '',
-      inputText: '',
-      allUrls: [],
-      posts: [],
-      feeds: [],
-      currentModal: '',
-    },
+    isValid: '',
+    errors: '',
+    inputText: '',
+    allUrls: [],
+    posts: [],
+    feeds: [],
+    currentModal: '',
   };
   const i18nextInstance = i18next.createInstance();
   i18nextInstance.init({

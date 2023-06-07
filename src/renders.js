@@ -55,7 +55,9 @@ const renderPosts = (feedData, language) => {
   postList.classList.add('list-group', 'border-0');
   postContainer.append(postList);
 
-  feedData[0].forEach((item) => {
+  const [currentFeed] = feedData;
+
+  currentFeed.forEach((item) => {
     const post = document.createElement('li');
     post.classList.add('list-group-item', 'd-flex', 'justify-content-between');
     postList.append(post);
@@ -71,7 +73,7 @@ const renderPosts = (feedData, language) => {
 };
 
 const renderFeed = (feedData) => {
-  const currentFeed = feedData[0];
+  const [currentFeed] = feedData;
   const feedContainer = document.querySelector('.feeds');
   const feedList = document.createElement('ul');
   feedList.classList.add('list-group', 'border-0');
@@ -117,21 +119,21 @@ const renderError = (errorMessage, language) => {
 
 const renderSelector = (path, value, language) => {
   switch (path) {
-    case 'formState.allUrls':
+    case 'allUrls':
       break;
-    case 'formState.isValid':
+    case 'isValid':
       renderStatus(value, language);
       break;
-    case 'formState.posts':
-      renderPosts(value.slice(-1), language);
+    case 'posts':
+      renderPosts(value, language);
       break;
-    case 'formState.feeds':
-      renderFeed(value.slice(-1));
+    case 'feeds':
+      renderFeed(value);
       break;
-    case 'formState.currentModal':
+    case 'currentModal':
       renderModal(value, language);
       break;
-    case 'formState.errors':
+    case 'errors':
       renderError(value, language);
       break;
     default:
