@@ -1,5 +1,4 @@
 import i18next from 'i18next';
-import * as yup from 'yup';
 import app from './index.js';
 import resources from './locales/ru.js';
 
