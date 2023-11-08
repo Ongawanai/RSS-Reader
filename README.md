@@ -5,7 +5,7 @@
 [![Node CI](https://github.com/Ongawanai/frontend-project-11/actions/workflows/actions.yml/badge.svg)](https://github.com/Ongawanai/frontend-project-11/actions/workflows/actions.yml)
 
 <h2>Vercel Deploy Link</h2>
-https://frontend-project-11-2t4fk9zeq-ongawanai.vercel.app/
+https://frontend-project-11-ruby.vercel.app/
 
 <h3>Install</h3>
 make ci
