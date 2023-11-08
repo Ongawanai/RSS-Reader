@@ -15,32 +15,26 @@ const makeUrl = (url) => {
 };
 
 const refreshRSS = (state, url) => {
-  axios
-    .get(makeUrl(url))
-    .then((responce) => {
-      const [feed, posts] = parseRSS(responce.data.contents);
-      const allPosts = state.posts.flat();
-      const findFeed = allPosts.find((item) => {
-        const itemHostname = new URL(item.link).hostname;
-        const feedHostname = new URL(feed.link).hostname;
-        return itemHostname === feedHostname;
-      });
-      const relatedFeedId = findFeed.feedId;
-      const relatedPosts = allPosts.filter((post) => post.feedId === relatedFeedId);
-      const newPosts = _.differenceBy(posts, relatedPosts, "link");
-
-      newPosts.forEach((post) => {
-        post.id = _.uniqueId();
-        post.feedId = relatedFeedId;
-      });
-      if (newPosts.length > 0) {
-        state.posts.unshift(newPosts);
-      }
-    })
-    .catch((err) => {
-      console.log(err);
-      setTimeout(refreshRSS, 5000, state, url);
+  axios.get(makeUrl(url)).then((responce) => {
+    const [feed, posts] = parseRSS(responce.data.contents);
+    const allPosts = state.posts.flat();
+    const findFeed = allPosts.find((item) => {
+      const itemHostname = new URL(item.link).hostname;
+      const feedHostname = new URL(feed.link).hostname;
+      return itemHostname === feedHostname;
     });
+    const relatedFeedId = findFeed.feedId;
+    const relatedPosts = allPosts.filter((post) => post.feedId === relatedFeedId);
+    const newPosts = _.differenceBy(posts, relatedPosts, "link");
+
+    newPosts.forEach((post) => {
+      post.id = _.uniqueId();
+      post.feedId = relatedFeedId;
+    });
+    if (newPosts.length > 0) {
+      state.posts.unshift(newPosts);
+    }
+  });
   setTimeout(refreshRSS, 5000, state, url);
 };
 
