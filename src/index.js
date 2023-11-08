@@ -96,6 +96,9 @@ export default (state, language) => {
 
   elements.postList.addEventListener("click", (e) => {
     e.preventDefault();
+    if (e.target.nodeName === "A") {
+      window.open(e.target.href);
+    }
     if (e.target.hasAttribute("data-feed")) {
       const buttonId = e.target.dataset.id;
       const allPosts = state.posts.flat();
